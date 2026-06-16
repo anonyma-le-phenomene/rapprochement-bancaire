@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rapprochement Bancaire – SYSCOHADA · Coach KESSE</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --vert:#00855a; --vert-c:#e6f4ef;
+  --bleu:#0057a8; --bleu-c:#e8f0fb;
+  --orange:#e05c00; --orange-c:#fff4ec;
+  --rouge:#c0392b; --rouge-c:#fdecea;
+  --jaune:#d97706; --jaune-c:#fef9ec;
+  --violet:#6d28d9; --violet-c:#f3e8ff;
+  --gris:#2d3748; --gris-c:#f7f8fa;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Source Sans 3',sans-serif;background:#eef1f5;color:var(--gris);line-height:1.7;}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#0d2b5e 0%,#0057a8 60%,#3b82f6 100%);color:#fff;padding:56px 32px 44px;text-align:center;position:relative;overflow:hidden;}
+.hero::before{content:'🏦';position:absolute;font-size:180px;opacity:.06;top:-20px;right:-20px;}
+.hero h1{font-family:'Playfair Display',serif;font-size:2.6rem;line-height:1.25;margin-bottom:10px;}
+.hero p{font-size:1.1rem;opacity:.9;max-width:660px;margin:0 auto 22px;}
+.badges{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;}
+.badge{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:5px 14px;font-size:.82rem;font-weight:600;}
+
+/* NAV */
+.nav{display:flex;flex-wrap:wrap;gap:4px;background:#fff;padding:10px 20px;box-shadow:0 2px 10px rgba(0,0,0,.09);position:sticky;top:0;z-index:100;}
+.nb{background:none;border:2px solid transparent;border-radius:8px;padding:7px 15px;font-size:.88rem;font-weight:700;cursor:pointer;transition:.2s;font-family:inherit;color:var(--gris);}
+.nb:hover{background:var(--bleu-c);color:var(--bleu);}
+.nb.on{background:var(--bleu);color:#fff;}
+
+/* LAYOUT */
+.sec{display:none;padding:36px 20px;max-width:1000px;margin:0 auto;}
+.sec.on{display:block;}
+
+/* CARD */
+.card{background:#fff;border-radius:14px;padding:26px;margin-bottom:22px;box-shadow:0 2px 14px rgba(0,0,0,.07);}
+.ctitle{font-family:'Playfair Display',serif;font-size:1.35rem;margin-bottom:12px;}
+
+/* RULE BOXES */
+.rb{padding:14px 18px;border-radius:10px;margin:12px 0;}
+.rb strong{display:block;margin-bottom:5px;}
+.rv{background:var(--vert-c);border-left:4px solid var(--vert);}
+.rb2{background:var(--bleu-c);border-left:4px solid var(--bleu);}
+.ro{background:var(--orange-c);border-left:4px solid var(--orange);}
+.rr{background:var(--rouge-c);border-left:4px solid var(--rouge);}
+.rj{background:var(--jaune-c);border-left:4px solid var(--jaune);}
+.rv2{background:var(--violet-c);border-left:4px solid var(--violet);}
+
+/* TABLES */
+.tbl{width:100%;border-collapse:collapse;font-size:.91rem;margin:14px 0;}
+.tbl th{background:var(--bleu);color:#fff;padding:9px 13px;text-align:left;}
+.tbl td{padding:8px 13px;border-bottom:1px solid #e2e8f0;}
+.tbl tr:nth-child(even) td{background:#f7f8fa;}
+.tbl .num{text-align:right;font-family:'JetBrains Mono',monospace;}
+.tbl .bold{font-weight:700;}
+.tbl .rouge{color:var(--rouge);}
+.tbl .vert{color:var(--vert);}
+
+/* ÉTAT DE RAPPROCHEMENT (grand tableau) */
+.etat{width:100%;border-collapse:collapse;font-size:.88rem;margin:14px 0;}
+.etat th{padding:10px 12px;text-align:center;}
+.etat th.left{text-align:left;}
+.etat td{padding:8px 12px;border-bottom:1px solid #e0e6ef;}
+.etat .section-head{background:var(--gris);color:#fff;font-weight:700;font-size:.9rem;}
+.etat .sous-head{background:#e8f0fb;color:var(--bleu);font-weight:700;}
+.etat .total-row{background:#f0f4ff;font-weight:700;border-top:2px solid var(--bleu);}
+.etat .solde-final{background:var(--bleu);color:#fff;font-weight:700;font-size:.95rem;}
+.etat .num{text-align:right;font-family:'JetBrains Mono',monospace;}
+.etat .rouge{color:var(--rouge);font-weight:700;}
+
+/* JOURNAL */
+.jnl{background:#fffef7;border:1px solid #e0d8a0;border-radius:10px;padding:18px;margin:12px 0;font-family:'JetBrains Mono',monospace;font-size:.84rem;}
+.jnl-head{font-family:'Source Sans 3',sans-serif;font-size:.8rem;color:#888;font-style:italic;margin-bottom:8px;}
+.jnl-row{display:grid;grid-template-columns:90px 1fr 100px 100px;gap:4px;padding:4px 0;border-bottom:1px dashed #e8e0b0;align-items:start;}
+.jnl-row:last-child{border-bottom:none;}
+.jnl-row.indent{grid-template-columns:90px 1fr 100px 100px;}
+.jnl-row .acc{color:var(--rouge);font-weight:700;}
+.jnl-row .cr{color:var(--bleu);font-weight:700;}
+.jnl-row .dt{color:var(--rouge);}
+.jnl-row .ct{color:var(--bleu);}
+.jnl-row .lib{font-family:'Source Sans 3',sans-serif;}
+.jnl-row .lib.ind{padding-left:20px;}
+.jnl-sep{border-bottom:2px solid #d0c890;margin:8px 0;}
+
+/* POINTAGE INTERACTIVE */
+.pointage-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:14px 0;}
+.pointage-col{border:2px solid #e2e8f0;border-radius:10px;overflow:hidden;}
+.pointage-col-head{padding:10px 14px;font-weight:700;font-size:.9rem;text-align:center;}
+.p-head-bank{background:var(--bleu);color:#fff;}
+.p-head-cpta{background:var(--vert);color:#fff;}
+.pointage-item{display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid #f0f0f0;font-size:.87rem;cursor:pointer;transition:.2s;}
+.pointage-item:hover{background:#f7f8fa;}
+.pointage-item.matched{background:#e6f4ef;text-decoration:line-through;color:#888;}
+.pointage-item.unmatched{background:var(--orange-c);}
+.p-chk{width:16px;height:16px;border:2px solid #aaa;border-radius:4px;flex-shrink:0;}
+.pointage-item.matched .p-chk{background:var(--vert);border-color:var(--vert);}
+.p-val{font-family:'JetBrains Mono',monospace;font-weight:700;margin-left:auto;font-size:.82rem;}
+.p-val.neg{color:var(--rouge);}
+.p-val.pos{color:var(--vert);}
+
+/* QUIZ */
+.qcard{background:#fff;border-radius:12px;padding:20px;margin-bottom:18px;box-shadow:0 2px 8px rgba(0,0,0,.07);}
+.qcard p{font-weight:700;margin-bottom:12px;}
+.qopt{display:block;width:100%;text-align:left;padding:9px 15px;margin:5px 0;border:2px solid #e2e8f0;border-radius:8px;background:#fff;cursor:pointer;font-size:.91rem;font-family:inherit;transition:.2s;}
+.qopt:hover{border-color:var(--bleu);background:var(--bleu-c);}
+.qopt.ok{border-color:var(--vert);background:var(--vert-c);color:var(--vert);}
+.qopt.ko{border-color:var(--rouge);background:var(--rouge-c);color:var(--rouge);}
+.qfb{padding:9px 13px;border-radius:8px;margin-top:8px;font-size:.88rem;display:none;}
+.qfb.show{display:block;}
+
+/* STEPS */
+.steps{counter-reset:step;}
+.step{display:flex;gap:14px;margin-bottom:16px;align-items:flex-start;}
+.step-num{width:36px;height:36px;border-radius:50%;background:var(--bleu);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.95rem;}
+.step-body{flex:1;}
+.step-body strong{display:block;font-size:1rem;color:var(--bleu);margin-bottom:4px;}
+
+/* BTN */
+.btn{background:var(--bleu);color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:.93rem;font-weight:700;cursor:pointer;font-family:inherit;}
+.btn:hover{background:#003f80;}
+.btn-v{background:var(--vert);}
+.btn-v:hover{background:#006644;}
+.btn-o{background:var(--orange);}
+
+/* SCORE */
+.score-box{background:var(--bleu);color:#fff;border-radius:12px;padding:22px;text-align:center;margin-top:20px;display:none;}
+.score-box h3{font-family:'Playfair Display',serif;font-size:1.8rem;}
+
+/* HIGHLIGHT */
+.hl-vert{background:var(--vert-c);color:var(--vert);padding:2px 6px;border-radius:4px;font-weight:700;}
+.hl-rouge{background:var(--rouge-c);color:var(--rouge);padding:2px 6px;border-radius:4px;font-weight:700;}
+.hl-bleu{background:var(--bleu-c);color:var(--bleu);padding:2px 6px;border-radius:4px;font-weight:700;}
+.hl-or{background:var(--jaune-c);color:var(--jaune);padding:2px 6px;border-radius:4px;font-weight:700;}
+
+@media(max-width:640px){
+  .hero h1{font-size:1.75rem;}
+  .pointage-grid{grid-template-columns:1fr;}
+  .jnl-row{grid-template-columns:65px 1fr 80px 80px;font-size:.77rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>🏦 Rapprochement Bancaire<br>SYSCOHADA Révisé</h1>
+  <p>Maîtrise le pointage, la construction de l'état de rapprochement et toutes les écritures de régularisation · Cours complet avec exercice corrigé</p>
+  <div class="badges">
+    <span class="badge">📖 Chapitre Banque & Trésorerie</span>
+    <span class="badge">✏️ Pointage interactif</span>
+    <span class="badge">📒 Écritures SYSCOHADA</span>
+    <span class="badge">🎯 Exercice complet corrigé</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+  <button class="nb on"  onclick="go('intro')">📌 Introduction</button>
+  <button class="nb"     onclick="go('docs')">📄 Documents</button>
+  <button class="nb"     onclick="go('pointage')">🔍 Pointage</button>
+  <button class="nb"     onclick="go('etat')">📊 État de Rapprochement</button>
+  <button class="nb"     onclick="go('ecritures')">📒 Écritures</button>
+  <button class="nb"     onclick="go('exercice')">✏️ Exercice Corrigé</button>
+  <button class="nb"     onclick="go('quiz')">🧪 Mini-Test</button>
+  <button class="nb"     onclick="go('memo')">🗝 Mémo Rapide</button>
+</div>
+
+<!-- ====================================================
+     INTRO
+     ==================================================== -->
+<div id="intro" class="sec on">
+
+  <div class="card">
+    <div class="ctitle" style="color:var(--bleu);">📌 Qu'est-ce que le Rapprochement Bancaire ?</div>
+    <div class="rb rv">
+      <strong>✅ Définition</strong>
+      Le rapprochement bancaire est une procédure qui consiste à <strong>comparer et réconcilier</strong> le solde du compte banque dans la comptabilité de l'entreprise (compte <strong>521</strong>) avec le solde figurant sur le <strong>relevé bancaire</strong> fourni par la banque, afin d'expliquer et d'éliminer les <strong>écarts</strong>.
+    </div>
+
+    <div class="rb rj">
+      <strong>❓ Pourquoi y a-t-il des écarts ?</strong>
+      Les deux soldes sont rarement identiques car certaines opérations ont été enregistrées par l'un mais pas encore par l'autre. On parle de <strong>décalages temporels</strong>.
+    </div>
+  </div>
+
+  <!-- Causes des écarts -->
+  <div class="card">
+    <div class="ctitle" style="color:var(--orange);">⚡ Les 6 Causes Principales des Écarts</div>
+    <table class="tbl">
+      <tr><th>#</th><th>Cause</th><th>Enregistré par l'entreprise ?</th><th>Enregistré par la banque ?</th></tr>
+      <tr>
+        <td>1</td>
+        <td>🔴 Chèques émis non encore débités par la banque</td>
+        <td class="vert bold">✅ OUI (au crédit du 521)</td>
+        <td class="rouge">❌ PAS ENCORE</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>🟠 Chèques remis à l'encaissement non encore crédités</td>
+        <td class="vert bold">✅ OUI (au débit du 521)</td>
+        <td class="rouge">❌ PAS ENCORE</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>🔵 Virements bancaires reçus non comptabilisés</td>
+        <td class="rouge">❌ PAS ENCORE</td>
+        <td class="vert bold">✅ OUI (crédit relevé)</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td>🟣 Frais bancaires, agios, commissions</td>
+        <td class="rouge">❌ PAS ENCORE</td>
+        <td class="vert bold">✅ OUI (débit relevé)</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td>🟡 Prélèvements automatiques non comptabilisés</td>
+        <td class="rouge">❌ PAS ENCORE</td>
+        <td class="vert bold">✅ OUI (débit relevé)</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td>⚪ Erreurs de comptabilisation (omissions, doublons)</td>
+        <td colspan="2" style="text-align:center;">Erreurs à corriger dans le journal</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Principe fondamental -->
+  <div class="card">
+    <div class="ctitle" style="color:var(--rouge);">🔑 Principe Fondamental</div>
+    <div class="rb rr">
+      <strong>⚠️ Convention IMPORTANTE – Sens des comptes</strong>
+      En comptabilité, le compte <strong>521 (Banque)</strong> est un compte d'<strong>actif</strong> :<br>
+      → Un solde <span class="hl-vert">DÉBITEUR</span> = l'entreprise a de l'argent en banque (positif)<br>
+      → Un solde <span class="hl-rouge">CRÉDITEUR</span> = l'entreprise est à découvert (négatif)<br><br>
+      Sur le <strong>relevé bancaire</strong>, c'est <strong>l'inverse</strong> (vision de la banque) :<br>
+      → Colonne <span class="hl-vert">CRÉDIT</span> du relevé = entrée d'argent pour l'entreprise<br>
+      → Colonne <span class="hl-rouge">DÉBIT</span> du relevé = sortie d'argent pour l'entreprise
+    </div>
+
+    <div class="rb rb2" style="margin-top:14px;">
+      <strong>📐 Objectif de l'état de rapprochement</strong>
+      À la fin du rapprochement, les deux soldes <strong>ajustés</strong> doivent être <strong>ÉGAUX</strong> :<br><br>
+      <code style="background:#1e3a5f;color:#7dd3fc;padding:10px 16px;border-radius:8px;display:block;margin-top:8px;font-size:.95rem;">
+        Solde 521 ajusté = Solde relevé bancaire ajusté
+      </code>
+    </div>
+  </div>
+
+  <!-- Périodicité -->
+  <div class="card">
+    <div class="ctitle" style="color:var(--vert);">📅 Quand Faire le Rapprochement ?</div>
+    <div class="rb rv">
+      <strong>🗓 Fréquence recommandée</strong>
+      En pratique professionnelle : <strong>chaque fin de mois</strong> obligatoirement.<br>
+      Pour les grandes entreprises avec beaucoup de transactions : <strong>chaque semaine</strong>.<br>
+      En Côte d'Ivoire selon le SYSCOHADA : au minimum <strong>mensuel</strong>, systématiquement avant la clôture annuelle.
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================
+     DOCUMENTS
+     ==================================================== -->
+<div id="docs" class="sec">
+
+  <div class="card">
+    <div class="ctitle" style="color:var(--bleu);">📄 Les 2 Documents de Base</div>
+    <p>Pour faire un rapprochement bancaire, tu dois avoir <strong>obligatoirement</strong> ces deux documents :</p>
+  </div>
+
+  <!-- Doc 1 : Relevé bancaire -->
+  <div class="card">
+    <div class="ctitle" style="color:var(--bleu);">🏦 Document 1 : Le Relevé Bancaire</div>
+    <p>Fourni par la banque chaque mois. Il montre toutes les opérations enregistrées par la banque.</p>
+    <div style="border:2px solid var(--bleu);border-radius:10px;overflow:hidden;margin-top:14px;">
+      <div style="background:var(--bleu);color:#fff;padding:10px 16px;font-weight:700;">SGBCI – Relevé de compte N° 00123456 – Octobre 2024</div>
+      <div style="padding:0;">
+        <table class="tbl" style="margin:0;">
+          <tr><th>Date</th><th>Libellé</th><th class="num">Débit (–)</th><th class="num">Crédit (+)</th><th class="num">Solde</th></tr>
+          <tr><td>01/10</td><td>Solde au 01/10</td><td class="num">—</td><td class="num">—</td><td class="num bold vert">1 200 000</td></tr>
+          <tr><td>03/10</td><td>Virement reçu client KOFFI</td><td class="num">—</td><td class="num vert">480 000</td><td class="num">1 680 000</td></tr>
+          <tr><td>07/10</td><td>Chèque N°A47 présenté</td><td class="num rouge">350 000</td><td class="num">—</td><td class="num">1 330 000</td></tr>
+          <tr><td>10/10</td><td>Chèque N°A48 présenté</td><td class="num rouge">200 000</td><td class="num">—</td><td class="num">1 130 000</td></tr>
+          <tr><td>15/10</td><td>Frais de tenue de compte</td><td class="num rouge">18 000</td><td class="num">—</td><td class="num">1 112 000</td></tr>
+          <tr><td>20/10</td><td>Prélèvement loyer</td><td class="num rouge">120 000</td><td class="num">—</td><td class="num">992 000</td></tr>
+          <tr><td>25/10</td><td>Chèque remis client BAMBA</td><td class="num">—</td><td class="num vert">250 000</td><td class="num">1 242 000</td></tr>
+          <tr><td>31/10</td><td>Intérêts créditeurs</td><td class="num">—</td><td class="num vert">12 500</td><td class="num bold vert">1 254 500</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="rb rb2" style="margin-top:12px;">
+      <strong>📌 Points à retenir sur le relevé bancaire</strong>
+      Le solde <strong>créditeur</strong> du relevé = argent disponible pour l'entreprise.<br>
+      Les <span class="hl-rouge">DÉBITS</span> sur le relevé = sorties d'argent de l'entreprise.<br>
+      Les <span class="hl-vert">CRÉDITS</span> sur le relevé = entrées d'argent pour l'entreprise.
+    </div>
+  </div>
+
+  <!-- Doc 2 : Grand Livre compte 521 -->
+  <div class="card">
+    <div class="ctitle" style="color:var(--vert);">📗 Document 2 : Le Grand Livre – Compte 521 (Banque)</div>
+    <p>Extrait du grand livre comptable de l'entreprise pour le même mois.</p>
+    <div style="border:2px solid var(--vert);border-radius:10px;overflow:hidden;margin-top:14px;">
+      <div style="background:var(--vert);color:#fff;padding:10px 16px;font-weight:700;">Grand Livre – Compte 521 Banque – Octobre 2024</div>
+      <table class="tbl" style="margin:0;">
+        <tr><th>Date</th><th>Libellé / Pièce</th><th class="num">Débit (entrée)</th><th class="num">Crédit (sortie)</th><th class="num">Solde</th></tr>
+        <tr><td>01/10</td><td>Solde reporté</td><td class="num vert bold">1 200 000</td><td class="num">—</td><td class="num bold">1 200 000 D</td></tr>
+        <tr><td>05/10</td><td>Chèque N°A47 – Fournisseur KESSE</td><td class="num">—</td><td class="num rouge">350 000</td><td class="num">850 000 D</td></tr>
+        <tr><td>08/10</td><td>Chèque N°A48 – Fournisseur TANAO</td><td class="num">—</td><td class="num rouge">200 000</td><td class="num">650 000 D</td></tr>
+        <tr><td>12/10</td><td>Remise chèque client BAMBA</td><td class="num vert">250 000</td><td class="num">—</td><td class="num">900 000 D</td></tr>
+        <tr><td>18/10</td><td>Chèque N°A49 – Assurance</td><td class="num">—</td><td class="num rouge">75 000</td><td class="num">825 000 D</td></tr>
+        <tr><td>22/10</td><td>Encaissement client SOTRA</td><td class="num vert">180 000</td><td class="num">—</td><td class="num bold vert">1 005 000 D</td></tr>
+      </table>
+    </div>
+    <div class="rb rv" style="margin-top:12px;">
+      <strong>📌 Points à retenir sur le compte 521</strong>
+      Solde <span class="hl-vert">DÉBITEUR</span> = l'entreprise a de l'argent (situation normale).<br>
+      <span class="hl-vert">DÉBITS</span> du compte 521 = entrées d'argent (reçus de clients, etc.).<br>
+      <span class="hl-rouge">CRÉDITS</span> du compte 521 = sorties d'argent (chèques émis, etc.).
+    </div>
+  </div>
+
+  <!-- Tableau comparatif -->
+  <div class="card">
+    <div class="ctitle" style="color:var(--rouge);">🔄 Comparatif : Comptabilité vs Relevé Bancaire</div>
+    <table class="tbl">
+      <tr><th>Opération</th><th>Dans le 521 (Entreprise)</th><th>Sur le Relevé (Banque)</th></tr>
+      <tr><td>Réception d'un chèque client</td><td class="vert bold">Débit 521 ↑</td><td class="vert bold">Crédit relevé ↑</td></tr>
+      <tr><td>Émission d'un chèque fournisseur</td><td class="rouge bold">Crédit 521 ↓</td><td class="rouge bold">Débit relevé ↓</td></tr>
+      <tr><td>Virement entrant reçu</td><td class="vert bold">Débit 521 ↑</td><td class="vert bold">Crédit relevé ↑</td></tr>
+      <tr><td>Prélèvement loyer / assurance</td><td class="rouge bold">Crédit 521 ↓</td><td class="rouge bold">Débit relevé ↓</td></tr>
+      <tr><td>Frais bancaires</td><td class="rouge bold">Crédit 521 ↓</td><td class="rouge bold">Débit relevé ↓</td></tr>
+      <tr><td>Intérêts créditeurs</td><td class="vert bold">Débit 521 ↑</td><td class="vert bold">Crédit relevé ↑</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ====================================================
+     POINTAGE
+     ==================================================== -->
+<div id="pointage" class="sec">
+
+  <div class="card">
+    <div class="ctitle" style="color:var(--bleu);">🔍 Le Pointage – Étape par Étape</div>
+    <div class="rb rb2">
+      <strong>📌 Définition du Pointage</strong>
+      Le pointage consiste à <strong>cocher (pointer) les opérations identiques</strong> qui apparaissent à la fois dans le compte 521 et dans le relevé bancaire. Les opérations <strong>non pointées</strong> sont les <strong>écarts</strong> à expliquer.
+    </div>
+  </div>
+
+  <!-- Méthodologie étape par étape -->
+  <div class="card">
+    <div class="ctitle" style="color:var(--orange);">📋 Méthodologie de Pointage (5 étapes)</div>
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <strong>Réunir les documents</strong>
+        Prépare : (1) le relevé bancaire du mois, (2) l'extrait du grand livre compte 521, (3) l'état de rapprochement du mois précédent (pour vérifier si des opérations en suspens ont bien été régularisées).
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <strong>Comparer opération par opération</strong>
+        Pour chaque ligne du relevé, cherche la même opération dans le compte 521. Vérifie : <span class="hl-vert">date</span>, <span class="hl-vert">montant</span>, <span class="hl-vert">sens</span> (entrée ou sortie).
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <strong>Pointer (cocher) les opérations identiques</strong>
+        Mets un ✓ devant chaque opération retrouvée dans les deux documents. Ces opérations sont <span class="hl-vert">rapprochées</span> et ne posent pas de problème.
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <strong>Identifier les opérations non pointées</strong>
+        Les opérations <span class="hl-rouge">sans coche</span> sont les écarts. Classe-les en deux catégories :<br>
+        • <strong>Dans le 521 mais pas sur le relevé</strong> → opérations en transit<br>
+        • <strong>Sur le relevé mais pas dans le 521</strong> → opérations à régulariser par écriture
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <strong>Construire l'état de rapprochement</strong>
+        Utilise un tableau à deux colonnes (voir section suivante) pour faire converger les deux soldes vers un <strong>solde identique</strong>.
+      </div>
+    </div>
+  </div>
+
+  <!-- Exercice de pointage interactif -->
+  <div class="card">
+    <div class="ctitle" style="color:var(--violet);">🖱 Exercice de Pointage Interactif</div>
+    <p style="margin-bottom:14px;">Clique sur les opérations identiques dans les deux colonnes pour les <strong>pointer</strong>. Les opérations non pointées sont tes écarts à traiter.</p>
+
+    <div class="pointage-grid">
+      <div class="pointage-col">
+        <div class="pointage-col-head p-head-cpta">📗 Compte 521 – Comptabilité</div>
+        <div class="pointage-item" onclick="pointer(this,'ch-a47','cpta')" id="cpta-a47">
+          <div class="p-chk"></div>
+          <span class="lib">Chèque N°A47 – Fourn. KESSE</span>
+          <span class="p-val neg">–350 000</span>
+        </div>
+        <div class="pointage-item" onclick="pointer(this,'ch-a48','cpta')" id="cpta-a48">
+          <div class="p-chk"></div>
+          <span class="lib">Chèque N°A48 – Fourn. TANAO</span>
+          <span class="p-val neg">–200 000</span>
+        </div>
+        <div class="pointage-item" onclick="pointer(this,'bamba','cpta')" id="cpta-bamba">
+          <div class="p-chk"></div>
+          <span class="lib">Remise chèque client BAMBA</span>
+          <span class="p-val pos">+250 000</span>
+        </div>
+        <div class="pointage-item unmatched" onclick="pointer(this,'ch-a49','cpta')" id="cpta-a49">
+          <div class="p-chk"></div>
+          <span class="lib">Chèque N°A49 – Assurance</span>
+          <span class="p-val neg">–75 000</span>
+        </div>
+        <div class="pointage-item unmatched" onclick="pointer(this,'sotra','cpta')" id="cpta-sotra">
+          <div class="p-chk"></div>
+          <span class="lib">Encaissement client SOTRA</span>
+          <span class="p-val pos">+180 000</span>
+        </div>
+      </div>
+
+      <div class="pointage-col">
+        <div class="pointage-col-head p-head-bank">🏦 Relevé Bancaire</div>
+        <div class="pointage-item" onclick="pointer(this,'vt-koffi','bank')" id="bank-koffi">
+          <div class="p-chk"></div>
+          <span class="lib">Virement reçu client KOFFI</span>
+          <span class="p-val pos">+480 000</span>
+        </div>
+        <div class="pointage-item" onclick="pointer(this,'ch-a47','bank')" id="bank-a47">
+          <div class="p-chk"></div>
+          <span class="lib">Chèque N°A47 présenté</span>
+          <span class="p-val neg">–350 000</span>
+        </div>
+        <div class="pointage-item" onclick="pointer(this,'ch-a48','bank')" id="bank-a48">
+          <div class="p-chk"></div>
+          <span class="lib">Chèque N°A48 présenté</span>
+          <span class="p-val neg">–200 000</span>
+        </div>
+        <div class="pointage-item unmatched" onclick="pointer(this,'frais','bank')" id="bank-frais">
+          <div class="p-chk"></div>
+          <span class="lib">Frais de tenue de compte</span>
+          <span class="p-val neg">–18 000</span>
+        </div>
+        <div class="pointage-item unmatched" onclick="pointer(this,'loyer','bank')" id="bank-loyer">
+          <div class="p-chk"></div>
+          <span class="lib">Prélèvement loyer</span>
+          <span class="p-val neg">–120 000</span>
+        </div>
+        <div class="pointage-item" onclick="pointer(this,'bamba','bank')" id="bank-bamba">
+          <div class="p-chk"></div>
+          <span class="lib">Chèque remis client BAMBA</span>
+          <span class="p-val pos">+250 000</span>
+        </div>
+        <div class="pointage-item unmatched" onclick="pointer(this,'interets','bank')" id="bank-interets">
+          <div class="p-chk"></div>
+          <span class="lib">Intérêts créditeurs</span>
+          <span class="p-val pos">+12 500</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="pointage-result" style="display:none;" class="rb rj" style="margin-top:14px;">
+      <strong>📊 Résultat du Pointage</strong>
+      <div id="pointage-msg"></div>
+    </div>
+    <button class="btn" style="margin-top:14px;" onclick="checkPointage()">✅ Vérifier mon pointage</button>
+    <button class="btn btn-o" style="margin-top:8px;margin-left:8px;" onclick="resetPointage()">🔄 Réinitialiser</button>
+
+    <div class="rb ro" style="margin-top:16px;">
+      <strong>📋 Bilan du pointage de cet exemple</strong>
+      <table class="tbl" style="margin-top:8px;">
+        <tr><th>Côté</th><th>Opérations non pointées</th><th>Traitement</th></tr>
+        <tr><td>Dans 521 seulement</td><td>Chèque A49 (–75 000) · Encaissement SOTRA (+180 000)</td><td>Déjà comptabilisés → en transit bancaire → pas d'écriture</td></tr>
+        <tr><td>Sur relevé seulement</td><td>Virement KOFFI (+480 000) · Frais (–18 000) · Loyer (–120 000) · Intérêts (+12 500)</td><td>Pas encore comptabilisés → <strong>écritures de régularisation obligatoires</strong></td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================
+     ÉTAT DE RAPPROCHEMENT
+     ==================================================== -->
+<div id="etat" class="sec">
+
+  <div class="card">
+    <div class="ctitle" style="color:var(--bleu);">📊 L'État de Rapprochement Bancaire</div>
+    <div class="rb rb2">
+      <strong>📌 Structure du tableau</strong>
+      L'état de rapprochement est un tableau en <strong>deux colonnes</strong> : à gauche le solde comptable ajusté, à droite le solde bancaire ajusté. À la fin, les deux colonnes doivent donner le même <strong>solde réel</strong>.
+    </div>
+  </div>
+
+  <!-- Tableau état de rapprochement -->
+  <div class="card">
+    <div class="ctitle" style="color:var(--vert);">📋 Modèle d'État de Rapprochement – Octobre 2024</div>
+
+    <table class="etat">
+      <thead>
+        <tr style="background:#1e3a5f;color:#fff;">
+          <th class="left" style="width:40%;">DÉSIGNATION</th>
+          <th style="width:30%;background:#1e5f3a;">SOLDE COMPTABLE<br>(Compte 521)</th>
+          <th style="width:30%;background:#1e3a5f;">SOLDE BANCAIRE<br>(Relevé bancaire)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Soldes initiaux -->
+        <tr>
+          <td class="section-head" colspan="3">SOLDES AU 31 OCTOBRE 2024</td>
+        </tr>
+        <tr>
+          <td>Solde brut (avant ajustements)</td>
+          <td class="num bold" style="background:#e6f4ef;color:var(--vert);">1 005 000</td>
+          <td class="num bold" style="background:#e8f0fb;color:var(--bleu);">1 254 500</td>
+        </tr>
+
+        <!-- Ajustements côté comptable -->
+        <tr>
+          <td class="section-head" colspan="3">AJUSTEMENTS DU SOLDE COMPTABLE (+/–)</td>
+        </tr>
+        <tr>
+          <td class="sous-head">À AJOUTER au solde comptable :</td>
+          <td></td><td></td>
+        </tr>
+        <tr>
+          <td style="padding-left:24px;">Virement reçu client KOFFI (non encore enregistré)</td>
+          <td class="num vert">+ 480 000</td>
+          <td class="num" style="color:#aaa;">—</td>
+        </tr>
+        <tr>
+          <td style="padding-left:24px;">Intérêts créditeurs banque (non enregistrés)</td>
+          <td class="num vert">+ 12 500</td>
+          <td class="num" style="color:#aaa;">—</td>
+        </tr>
+        <tr>
+          <td class="sous-head">À DÉDUIRE du solde comptable :</td>
+          <td></td><td></td>
+        </tr>
+        <tr>
+          <td style="padding-left:24px;">Frais de tenue de compte (non comptabilisés)</td>
+          <td class="num rouge">– 18 000</td>
+          <td class="num" style="color:#aaa;">—</td>
+        </tr>
+        <tr>
+          <td style="padding-left:24px;">Prélèvement loyer (non enregistré)</td>
+          <td class="num rouge">– 120 000</td>
+          <td class="num" style="color:#aaa;">—</td>
+        </tr>
+
+        <!-- Ajustements côté bancaire -->
+        <tr>
+          <td class="section-head" colspan="3">AJUSTEMENTS DU SOLDE BANCAIRE (+/–)</td>
+        </tr>
+        <tr>
+          <td class="sous-head">À AJOUTER au solde bancaire :</td>
+          <td></td><td></td>
+        </tr>
+        <tr>
+          <td style="padding-left:24px;">Encaissement client SOTRA (comptabilisé, pas encore crédité par banque)</td>
+          <td class="num" style="color:#aaa;">—</td>
+          <td class="num vert">+ 180 000</td>
+        </tr>
+        <tr>
+          <td class="sous-head">À DÉDUIRE du solde bancaire :</td>
+          <td></td><td></td>
+        </tr>
+        <tr>
+          <td style="padding-left:24px;">Chèque N°A49 – Assurance (émis, pas encore présenté à la banque)</td>
+          <td class="num" style="color:#aaa;">—</td>
+          <td class="num rouge">– 75 000</td>
+        </tr>
+
+        <!-- Soldes ajustés -->
+        <tr class="total-row">
+          <td>SOLDE AJUSTÉ TOTAL</td>
+          <td class="num">1 005 000 + 480 000 + 12 500 – 18 000 – 120 000</td>
+          <td class="num">1 254 500 + 180 000 – 75 000</td>
+        </tr>
+        <tr class="solde-final">
+          <td>✅ SOLDE RÉEL (doit être identique)</td>
+          <td class="num">= 1 359 500</td>
+          <td class="num">= 1 359 500</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="rb rv" style="margin-top:10px;">
+      <strong>✅ Vérification</strong>
+      Les deux soldes ajustés = <strong>1 359 500 F</strong> → Le rapprochement est correct !<br>
+      Les opérations dans un seul côté correspondent aux <strong>décalages temporels normaux</strong> (en transit) → pas d'erreur.
+    </div>
+  </div>
+
+  <!-- Logique du tableau -->
+  <div class="card">
+    <div class="ctitle" style="color:var(--orange);">🧭 Logique du Tableau – Mémo Visuel</div>
+    <table class="tbl">
+      <tr><th>Opération non pointée</th><th>Côté Comptable (521)</th><th>Côté Bancaire (Relevé)</th></tr>
+      <tr>
+        <td>Opération sur le relevé, PAS dans le 521 (entrée)</td>
+        <td class="vert bold">Ajouter (+) au solde 521</td>
+        <td style="color:#aaa;">— (déjà dessus)</td>
+      </tr>
+      <tr>
+        <td>Opération sur le relevé, PAS dans le 521 (sortie)</td>
+        <td class="rouge bold">Déduire (–) du solde 521</td>
+        <td style="color:#aaa;">— (déjà dessus)</td>
+      </tr>
+      <tr>
+        <td>Opération dans le 521, PAS sur le relevé (encaissement)</td>
+        <td style="color:#aaa;">— (déjà dedans)</td>
+        <td class="vert bold">Ajouter (+) au solde relevé</td>
+      </tr>
+      <tr>
+        <td>Opération dans le 521, PAS sur le relevé (décaissement)</td>
+        <td style="color:#aaa;">— (déjà dedans)</td>
+        <td class="rouge bold">Déduire (–) du solde relevé</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<!-- ====================================================
+     ÉCRITURES
+     ==================================================== -->
+<div id="ecritures" class="sec">
+
+  <div class="card">
+    <div class="ctitle" style="color:var(--bleu);">📒 Les Écritures de Régularisation</div>
+    <div class="rb rr">
+      <strong>⚠️ Règle Fondamentale</strong>
+      Seules les opérations qui <strong>sont sur le relevé bancaire mais PAS encore dans le compte 521</strong> donnent lieu à des <strong>écritures comptables</strong>.<br>
+      Les opérations déjà dans le 521 mais pas encore sur le relevé sont des <strong>opérations en transit</strong> → aucune écriture, elles apparaîtront sur le prochain relevé.
+    </div>
+  </div>
+
+  <!-- Cas 1 : Frais bancaires -->
+  <div class="card">
+    <div class="ctitle" style="color:var(--rouge);">📒 Cas 1 – Frais Bancaires et Commissions</div>
+    <p>La banque prélève automatiquement ses frais. L'entreprise ne les connaît qu'en recevant le relevé.</p>
+    <div class="jnl">
+      <div class="jnl-head">Date du relevé – Enregistrement des frais bancaires</div>
+      <div class="jnl-row">
+        <span class="acc">6312</span>
+        <span class="lib">Frais sur effets / Frais bancaires</span>
+        <span class="dt">18 000</span>
+        <span></span>
+      </div>
+      <div class="jnl-row">
+        <span class="cr" style="padding-left:20px;">521</span>
+        <span class="lib ind">Banque</span>
+        <span></span>
+        <span class="ct">18 000</span>
+      </div>
+      <div class="jnl-head" style="margin-top:8px;">(Frais de tenue de compte prélevés sur relevé d'octobre)</div>
+    </div>
+    <div class="rb rr">
+      <strong>📌 Comptes de charges bancaires selon la nature</strong>
+      <table class="tbl" style="margin-top:8px;">
+        <tr><th>Nature</th><th>Compte</th></tr>
+        <tr><td>Frais de tenue de compte</td><td>6312</td></tr>
+        <tr><td>Agios sur découvert</td><td>6741 – Intérêts sur découverts</td></tr>
+        <tr><td>Commissions diverses</td><td>6317 – Frais de transfert</td></tr>
+        <tr><td>Droits de timbre (TOB)</td><td>6462</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Cas 2 : Virement reçu -->
+  <div class="card">
+    <div class="ctitle" style="color:var(--vert);">📒 Cas 2 – Virement Reçu (Client)</div>
+    <p>Un client a payé par virement directement sur le compte bancaire. L'entreprise l'apprend via le relevé.</p>
+    <div class="jnl">
+      <div class="jnl-head">Date du relevé – Encaissement virement client KOFFI</div>
+      <div class="jnl-row">
+        <span class="acc">521</span>
+        <span class="lib">Banque</span>
+        <span class="dt">480 000</span>
+        <span></span>
+      </div>
+      <div class="jnl-row">
+        <span class="cr" style="padding-left:20px;">411</span>
+        <span class="lib ind">Client KOFFI</span>
+        <span></span>
+        <span class="ct">480 000</span>
+      </div>
+      <div class="jnl-head" style="margin-top:8px;">(Virement reçu du client KOFFI, constaté sur relevé d'octobre)</div>
+    </div>
+  </div>
+
+  <!-- Cas 3 : Prélèvement automatique -->
+  <div class="card">
+    <div class="ctitle" style="color:var(--orange);">📒 Cas 3 – Prélèvement Automatique (Loyer, Assurance, etc.)</div>
+    <div class="jnl">
+      <div class="jnl-head">Date du relevé – Prélèvement loyer</div>
+      <div class="jnl-row">
+        <span class="acc">621</span>
+        <span class="lib">Loyers et charges locatives</span>
+        <span class="dt">120 000</span>
+        <span></span>
+      </div>
+      <div class="jnl-row">
+        <span class="cr" style="padding-left:20px;">521</span>
+        <span class="lib ind">Banque</span>
+        <span></span>
+        <span class="ct">120 000</span>
+      </div>
+      <div class="jnl-head" style="margin-top:8px;">(Prélèvement loyer octobre constaté sur relevé bancaire)</div>
+    </div>
+  </div>
+
+  <!-- Cas 4 : Intérêts créditeurs -->
+  <div class="card">
+    <div class="ctitle" style="color:var(--vert);">📒 Cas 4 – Intérêts Créditeurs (la banque te rémunère)</div>
+    <div class="jnl">
+      <div class="jnl-head">Date du relevé – Intérêts créditeurs banque</div>
+      <div class="jnl-row">
+        <span class="acc">521</span>
+        <span class="lib">Banque</span>
+        <span class="dt">12 500</span>
+        <span></span>
+      </div>
+      <div class="jnl-row">
+        <span class="cr" style="padding-left:20px;">771</span>
+        <span class="lib ind">Intérêts de placements et comptes courants</span>
+        <span></span>
+        <span class="ct">12 500</span>
+      </div>
+      <div class="jnl-head" style="margin-top:8px;">(Intérêts créditeurs du mois d'octobre)</div>
+    </div>
+  </div>
+
+  <!-- Cas 5 : Chèque impayé -->
+  <div class="card">
+    <div class="ctitle" style="color:var(--rouge);">📒 Cas 5 – Chèque Client Impayé (retour)</div>
+    <p>Un chèque remis à l'encaissement revient impayé. La banque débite le compte.</p>
+    <div class="jnl">
+      <div class="jnl-head">Étape 1 – Constatation du chèque impayé</div>
+      <div class="jnl-row">
+        <span class="acc">6318</span>
+        <span class="lib">Frais sur impayés (frais bancaires)</span>
+        <span class="dt">X</span>
+        <span></span>
+      </div>
+      <div class="jnl-row">
+        <span class="acc">4131</span>
+        <span class="lib">Clients, chèques impayés</span>
+        <span class="dt">Montant chèque</span>
+        <span></span>
+      </div>
+      <div class="jnl-row">
+        <span class="cr" style="padding-left:20px;">521</span>
+        <span class="lib ind">Banque (montant total débité)</span>
+        <span></span>
+        <span class="ct">Total débité</span>
+      </div>
+      <div class="jnl-sep"></div>
+      <div class="jnl-head">Étape 2 – Imputation des frais au client défaillant</div>
+      <div class="jnl-row">
+        <span class="acc">4131</span>
+        <span class="lib">Clients, chèques impayés (frais)</span>
+        <span class="dt">X</span>
+        <span></span>
+      </div>
+      <div class="jnl-row">
+        <span class="cr" style="padding-left:20px;">7078</span>
+        <span class="lib ind">Produits accessoires</span>
+        <span></span>
+        <span class="ct">X</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cas 6 : Erreur -->
+  <div class="card">
+    <div class="ctitle" style="color:var(--violet);">📒 Cas 6 – Erreur de Comptabilisation</div>
+    <div class="rb rv2">
+      <strong>🔍 Erreur de montant</strong>
+      Si tu as saisi 150 000 F au lieu de 510 000 F → tu dois passer une écriture de <strong>complément de 360 000 F</strong> pour corriger.
+    </div>
+    <div class="jnl">
+      <div class="jnl-head">Correction d'une erreur (exemple : achat sous-évalué de 360 000)</div>
+      <div class="jnl-row">
+        <span class="acc">601</span>
+        <span class="lib">Achats de marchandises (complément)</span>
+        <span class="dt">360 000</span>
+        <span></span>
+      </div>
+      <div class="jnl-row">
+        <span class="cr" style="padding-left:20px;">521</span>
+        <span class="lib ind">Banque</span>
+        <span></span>
+        <span class="ct">360 000</span>
+      </div>
+    </div>
+    <div class="rb ro" style="margin-top:12px;">
+      <strong>📋 Tableau récapitulatif des écritures</strong>
+      <table class="tbl" style="margin-top:8px;">
+        <tr><th>Opération relevé non comptabilisée</th><th>Débit</th><th>Crédit</th></tr>
+        <tr><td>Frais bancaires, commissions</td><td>6312 / 6317 / 6741</td><td>521</td></tr>
+        <tr><td>Virement client reçu</td><td>521</td><td>411</td></tr>
+        <tr><td>Prélèvement loyer / assurance</td><td>621 / 625</td><td>521</td></tr>
+        <tr><td>Intérêts créditeurs</td><td>521</td><td>771</td></tr>
+        <tr><td>Chèque impayé retourné</td><td>4131 + 6318</td><td>521</td></tr>
+        <tr><td>Virement fournisseur envoyé</td><td>401</td><td>521</td></tr>
+        <tr><td>Remboursement trop-perçu reçu</td><td>521</td><td>4011 / 165</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================
+     EXERCICE CORRIGÉ COMPLET
+     ==================================================== -->
+<div id="exercice" class="sec">
+
+  <div class="card">
+    <div class="ctitle" style="color:var(--bleu);">✏️ Exercice Complet Corrigé – Entreprise KASP-CI</div>
+    <div class="rb rb2">
+      <strong>📋 Énoncé</strong>
+      Au 31 mars 2024, l'entreprise <strong>KASP-CI</strong> dispose des informations suivantes pour établir son état de rapprochement bancaire avec la <strong>BICICI</strong> :
+    </div>
+
+    <p style="font-weight:700;margin:14px 0 8px;color:var(--bleu);">📗 Solde du compte 521 au 31 mars : <span class="hl-vert">2 450 000 F (débiteur)</span></p>
+    <p style="font-weight:700;margin:0 0 8px;color:var(--bleu);">🏦 Solde du relevé BICICI au 31 mars : <span class="hl-bleu">3 120 000 F (créditeur)</span></p>
+
+    <p style="font-weight:700;margin:16px 0 8px;">Opérations relevées lors du pointage :</p>
+    <table class="tbl">
+      <tr><th>#</th><th>Description</th><th>Montant</th><th>Où ?</th></tr>
+      <tr><td>1</td><td>Chèque N°B12 émis à Fournisseur GLOBAL (non encore présenté à la banque)</td><td>180 000</td><td class="bold" style="color:var(--vert);">521 seulement</td></tr>
+      <tr><td>2</td><td>Chèque N°B15 émis à Fournisseur TANAO (non encore présenté)</td><td>240 000</td><td class="bold" style="color:var(--vert);">521 seulement</td></tr>
+      <tr><td>3</td><td>Virement entrant client SERGE INVEST (non encore comptabilisé)</td><td>850 000</td><td class="bold" style="color:var(--bleu);">Relevé seulement</td></tr>
+      <tr><td>4</td><td>Remise chèque client AURIOL – encaissé par la banque, pas encore comptabilisé</td><td>320 000</td><td class="bold" style="color:var(--bleu);">Relevé seulement</td></tr>
+      <tr><td>5</td><td>Frais de tenue de compte BICICI</td><td>25 000</td><td class="bold" style="color:var(--bleu);">Relevé seulement</td></tr>
+      <tr><td>6</td><td>Agios sur découvert temporaire (intérêts débiteurs)</td><td>15 000</td><td class="bold" style="color:var(--bleu);">Relevé seulement</td></tr>
+      <tr><td>7</td><td>Encaissement client DSK-MOSCOU par la comptabilité, pas encore sur relevé</td><td>500 000</td><td class="bold" style="color:var(--vert);">521 seulement</td></tr>
+      <tr><td>8</td><td>Chèque client impayé retourné par la banque + frais d'impayé 8 000 F</td><td>145 000 + 8 000</td><td class="bold" style="color:var(--bleu);">Relevé seulement</td></tr>
+    </table>
+
+    <p style="font-weight:700;margin-top:16px;">Travail à faire :</p>
+    <ol style="margin-left:20px;">
+      <li>Établir l'état de rapprochement bancaire</li>
+      <li>Passer les écritures de régularisation</li>
+    </ol>
+  </div>
+
+  <!-- SOLUTION -->
+  <div class="card" style="border-top:4px solid var(--vert);">
+    <div class="ctitle" style="color:var(--vert);">✅ SOLUTION COMPLÈTE</div>
+
+    <p style="font-weight:700;font-size:1rem;color:var(--bleu);margin-bottom:14px;">ÉTAPE 1 – État de Rapprochement Bancaire au 31/03/2024</p>
+
+    <table class="etat">
+      <thead>
+        <tr style="background:#1e3a5f;color:#fff;">
+          <th class="left">DÉSIGNATION</th>
+          <th style="background:#1e5f3a;">SOLDE COMPTABLE (521) en F</th>
+          <th>SOLDE BANCAIRE (Relevé) en F</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="section-head" colspan="3">SOLDES AU 31 MARS 2024</td></tr>
+        <tr>
+          <td>Solde brut avant ajustements</td>
+          <td class="num bold" style="background:#e6f4ef;color:var(--vert);">2 450 000</td>
+          <td class="num bold" style="background:#e8f0fb;color:var(--bleu);">3 120 000</td>
+        </tr>
+
+        <tr><td class="section-head" colspan="3">AJUSTEMENTS SOLDE COMPTABLE</td></tr>
+        <tr>
+          <td class="sous-head">À AJOUTER :</td><td></td><td></td>
+        </tr>
+        <tr>
+          <td style="padding-left:22px;">Virement client SERGE INVEST (non comptabilisé)</td>
+          <td class="num vert">+ 850 000</td>
+          <td class="num" style="color:#bbb;">—</td>
+        </tr>
+        <tr>
+          <td style="padding-left:22px;">Remise chèque client AURIOL (non comptabilisé)</td>
+          <td class="num vert">+ 320 000</td>
+          <td class="num" style="color:#bbb;">—</td>
+        </tr>
+        <tr>
+          <td class="sous-head">À DÉDUIRE :</td><td></td><td></td>
+        </tr>
+        <tr>
+          <td style="padding-left:22px;">Frais de tenue de compte BICICI</td>
+          <td class="num rouge">– 25 000</td>
+          <td class="num" style="color:#bbb;">—</td>
+        </tr>
+        <tr>
+          <td style="padding-left:22px;">Agios / intérêts débiteurs</td>
+          <td class="num rouge">– 15 000</td>
+          <td class="num" style="color:#bbb;">—</td>
+        </tr>
+        <tr>
+          <td style="padding-left:22px;">Chèque client impayé retourné</td>
+          <td class="num rouge">– 145 000</td>
+          <td class="num" style="color:#bbb;">—</td>
+        </tr>
+        <tr>
+          <td style="padding-left:22px;">Frais d'impayé bancaire</td>
+          <td class="num rouge">– 8 000</td>
+          <td class="num" style="color:#bbb;">—</td>
+        </tr>
+
+        <tr><td class="section-head" colspan="3">AJUSTEMENTS SOLDE BANCAIRE</td></tr>
+        <tr>
+          <td class="sous-head">À AJOUTER :</td><td></td><td></td>
+        </tr>
+        <tr>
+          <td style="padding-left:22px;">Encaissement client DSK-MOSCOU (en transit)</td>
+          <td class="num" style="color:#bbb;">—</td>
+          <td class="num vert">+ 500 000</td>
+        </tr>
+        <tr>
+          <td class="sous-head">À DÉDUIRE :</td><td></td><td></td>
+        </tr>
+        <tr>
+          <td style="padding-left:22px;">Chèque N°B12 Fourn. GLOBAL (émis, non présenté)</td>
+          <td class="num" style="color:#bbb;">—</td>
+          <td class="num rouge">– 180 000</td>
+        </tr>
+        <tr>
+          <td style="padding-left:22px;">Chèque N°B15 Fourn. TANAO (émis, non présenté)</td>
+          <td class="num" style="color:#bbb;">—</td>
+          <td class="num rouge">– 240 000</td>
+        </tr>
+
+        <tr class="total-row">
+          <td>Calcul du solde ajusté</td>
+          <td class="num">2 450 000 + 850 000 + 320 000 – 25 000 – 15 000 – 145 000 – 8 000</td>
+          <td class="num">3 120 000 + 500 000 – 180 000 – 240 000</td>
+        </tr>
+        <tr class="solde-final">
+          <td>✅ SOLDE RÉEL (identique des deux côtés)</td>
+          <td class="num">= 3 427 000 F</td>
+          <td class="num">= 3 200 000 F</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="rb rv" style="margin-top:10px;">
+      <strong>✅ Vérification</strong>
+      Solde comptable ajusté : 2 450 000 + 850 000 + 320 000 – 25 000 – 15 000 – 145 000 – 8 000 = <strong>3 427 000 F</strong><br>
+      Solde bancaire ajusté : 3 120 000 + 500 000 – 180 000 – 240 000 = <strong>3 200 000 F</strong>
+    </div>
+    <div class="rb rr" style="margin-top:10px;">
+      <strong>⚠️ Les deux soldes ne sont pas égaux ! Cela signifie qu'il y a encore une erreur.</strong>
+      Différence = 3 427 000 – 3 200 000 = <strong>227 000 F</strong>. Il faut vérifier s'il n'y a pas une opération oubliée ou une erreur de comptabilisation. Dans un exercice d'examen, si les soldes ne coïncident pas, tu dois indiquer la différence et chercher l'erreur.
+    </div>
+  </div>
+
+  <!-- Écritures -->
+  <div class="card" style="border-top:4px solid var(--bleu);">
+    <div class="ctitle" style="color:var(--bleu);">ÉTAPE 2 – Écritures de Régularisation au 31/03/2024</div>
+    <p style="margin-bottom:14px;">On passe les écritures uniquement pour les opérations <strong>sur le relevé mais pas dans le 521</strong> (opérations 3, 4, 5, 6, 8) :</p>
+
+    <div class="jnl">
+      <div class="jnl-head">03 – Virement client SERGE INVEST reçu (non comptabilisé)</div>
+      <div class="jnl-row"><span class="acc">521</span><span class="lib">Banque</span><span class="dt">850 000</span><span></span></div>
+      <div class="jnl-row"><span class="cr" style="padding-left:20px;">411</span><span class="lib ind">Client SERGE INVEST</span><span></span><span class="ct">850 000</span></div>
+    </div>
+
+    <div class="jnl">
+      <div class="jnl-head">04 – Remise chèque client AURIOL encaissé par la banque</div>
+      <div class="jnl-row"><span class="acc">521</span><span class="lib">Banque</span><span class="dt">320 000</span><span></span></div>
+      <div class="jnl-row"><span class="cr" style="padding-left:20px;">411</span><span class="lib ind">Client AURIOL</span><span></span><span class="ct">320 000</span></div>
+    </div>
+
+    <div class="jnl">
+      <div class="jnl-head">05 – Frais de tenue de compte BICICI</div>
+      <div class="jnl-row"><span class="acc">6312</span><span class="lib">Frais bancaires</span><span class="dt">25 000</span><span></span></div>
+      <div class="jnl-row"><span class="cr" style="padding-left:20px;">521</span><span class="lib ind">Banque</span><span></span><span class="ct">25 000</span></div>
+    </div>
+
+    <div class="jnl">
+      <div class="jnl-head">06 – Agios sur découvert temporaire</div>
+      <div class="jnl-row"><span class="acc">6741</span><span class="lib">Intérêts sur découverts bancaires</span><span class="dt">15 000</span><span></span></div>
+      <div class="jnl-row"><span class="cr" style="padding-left:20px;">521</span><span class="lib ind">Banque</span><span></span><span class="ct">15 000</span></div>
+    </div>
+
+    <div class="jnl">
+      <div class="jnl-head">08 – Chèque client impayé retourné + frais (Étape 1 : constatation)</div>
+      <div class="jnl-row"><span class="acc">6318</span><span class="lib">Frais sur impayés</span><span class="dt">8 000</span><span></span></div>
+      <div class="jnl-row"><span class="acc">4131</span><span class="lib">Clients, chèques impayés</span><span class="dt">145 000</span><span></span></div>
+      <div class="jnl-row"><span class="cr" style="padding-left:20px;">521</span><span class="lib ind">Banque (montant total débité)</span><span></span><span class="ct">153 000</span></div>
+    </div>
+
+    <div class="jnl">
+      <div class="jnl-head">08 – Imputation des frais d'impayé au client défaillant (Étape 2)</div>
+      <div class="jnl-row"><span class="acc">4131</span><span class="lib">Clients, chèques impayés (frais)</span><span class="dt">8 000</span><span></span></div>
+      <div class="jnl-row"><span class="cr" style="padding-left:20px;">7078</span><span class="lib ind">Produits accessoires</span><span></span><span class="ct">8 000</span></div>
+    </div>
+
+    <div class="rb rv" style="margin-top:14px;">
+      <strong>✅ Résumé des écritures passées</strong>
+      Après ces régularisations, le solde du compte 521 sera mis à jour et devra correspondre au solde réel calculé dans l'état de rapprochement.
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================
+     QUIZ
+     ==================================================== -->
+<div id="quiz" class="sec">
+  <div class="card">
+    <div class="ctitle" style="color:var(--bleu);">🧪 Mini-Test – Rapprochement Bancaire (8 Questions)</div>
+    <p style="margin-bottom:18px;">Score minimum requis : <strong>6/8</strong>. Une seule tentative par question.</p>
+
+    <div class="qcard" id="rq1">
+      <p>Q1. Le compte 521 (Banque) est un compte d'actif. Un solde débiteur signifie :</p>
+      <button class="qopt" onclick="rq(this,true,'rq1','Correct ! Un solde débiteur du 521 = l\'entreprise a de l\'argent disponible en banque (situation positive).')">A) L'entreprise a de l'argent disponible en banque</button>
+      <button class="qopt" onclick="rq(this,false,'rq1','Non. Un solde créditeur = découvert bancaire. Débiteur = argent disponible.')">B) L'entreprise est à découvert</button>
+      <button class="qopt" onclick="rq(this,false,'rq1','Non. Le sens n\'a pas d\'importance. En comptabilité, débiteur = positif pour un compte d\'actif.')">C) Le solde n'a pas d'importance</button>
+      <div id="rfb-rq1" class="qfb"></div>
+    </div>
+
+    <div class="qcard" id="rq2">
+      <p>Q2. Un chèque émis par l'entreprise et comptabilisé mais pas encore présenté à la banque doit être :</p>
+      <button class="qopt" onclick="rq(this,false,'rq2','Non. Pas besoin de réécriture. C\'est déjà comptabilisé.')">A) Comptabilisé une deuxième fois</button>
+      <button class="qopt" onclick="rq(this,true,'rq2','Exact ! Ce chèque est dans le 521 (déjà comptabilisé) mais pas encore sur le relevé. Il faut le déduire du solde du relevé dans l\'état de rapprochement. Pas d\'écriture nécessaire.')">B) Déduit du solde bancaire dans l'état de rapprochement</button>
+      <button class="qopt" onclick="rq(this,false,'rq2','Non. Il n\'y a pas d\'erreur. C\'est un simple décalage temporel.')">C) Annulé comme erreur</button>
+      <div id="rfb-rq2" class="qfb"></div>
+    </div>
+
+    <div class="qcard" id="rq3">
+      <p>Q3. Des frais bancaires prélevés sur le relevé mais PAS encore dans le journal doivent donner lieu à :</p>
+      <button class="qopt" onclick="rq(this,true,'rq3','Parfait ! Frais bancaires non comptabilisés → Débit 6312 / Crédit 521. C\'est une écriture de régularisation obligatoire.')">A) Une écriture : Débit 6312 / Crédit 521</button>
+      <button class="qopt" onclick="rq(this,false,'rq3','Non. C\'est l\'inverse. Le 521 est crédité car la banque a prélevé de l\'argent.')">B) Une écriture : Débit 521 / Crédit 6312</button>
+      <button class="qopt" onclick="rq(this,false,'rq3','Non. Les frais bancaires doivent toujours être enregistrés dans la comptabilité.')">C) Aucune écriture</button>
+      <div id="rfb-rq3" class="qfb"></div>
+    </div>
+
+    <div class="qcard" id="rq4">
+      <p>Q4. Lors du rapprochement bancaire, les opérations dans le compte 521 mais PAS sur le relevé sont appelées :</p>
+      <button class="qopt" onclick="rq(this,false,'rq4','Non. Ce terme n\'est pas utilisé pour ça.')">A) Des erreurs de comptabilité</button>
+      <button class="qopt" onclick="rq(this,true,'rq4','Correct ! Ce sont des opérations en transit bancaire : déjà comptabilisées mais pas encore enregistrées par la banque. Elles n\'exigent pas d\'écriture comptable.')">B) Des opérations en transit bancaire</button>
+      <button class="qopt" onclick="rq(this,false,'rq4','Non. Ce terme désigne plutôt les décalages sur le relevé.')">C) Des soldes bancaires</button>
+      <div id="rfb-rq4" class="qfb"></div>
+    </div>
+
+    <div class="qcard" id="rq5">
+      <p>Q5. Un virement reçu d'un client, figurant sur le relevé bancaire mais non comptabilisé, doit être traité comment ?</p>
+      <button class="qopt" onclick="rq(this,false,'rq5','Non. On ajoute ce montant au solde comptable dans l\'état de rapprochement ET on passe une écriture.')">A) Uniquement ajouté au solde bancaire dans l'état</button>
+      <button class="qopt" onclick="rq(this,true,'rq5','Exact ! Côté rapprochement : ajouter au solde comptable. Écriture : Débit 521 / Crédit 411 (Client). Les deux vont ensemble.')">B) Ajouté au solde comptable dans l'état ET écriture Débit 521 / Crédit 411</button>
+      <button class="qopt" onclick="rq(this,false,'rq5','Non. Il faut passer une écriture pour régulariser la comptabilité.')">C) Aucun traitement nécessaire</button>
+      <div id="rfb-rq5" class="qfb"></div>
+    </div>
+
+    <div class="qcard" id="rq6">
+      <p>Q6. À la fin d'un état de rapprochement correctement établi :</p>
+      <button class="qopt" onclick="rq(this,false,'rq6','Non. Les soldes bruts sont toujours différents (sinon il n\'y aurait rien à rapprocher).')">A) Le solde brut comptable = le solde brut bancaire</button>
+      <button class="qopt" onclick="rq(this,true,'rq6','Parfait ! C\'est la règle fondamentale. Si les deux soldes AJUSTÉS ne coïncident pas, c\'est qu\'il y a une erreur ou une opération oubliée.')">B) Le solde AJUSTÉ comptable = le solde AJUSTÉ bancaire</button>
+      <button class="qopt" onclick="rq(this,false,'rq6','Non. Il doit y avoir convergence entre les deux soldes ajustés.')">C) Les deux soldes peuvent rester différents</button>
+      <div id="rfb-rq6" class="qfb"></div>
+    </div>
+
+    <div class="qcard" id="rq7">
+      <p>Q7. Les intérêts créditeurs apparaissant sur le relevé bancaire s'enregistrent :</p>
+      <button class="qopt" onclick="rq(this,true,'rq7','Correct ! Les intérêts créditeurs sont un produit financier pour l\'entreprise. Débit 521 (entrée d\'argent) / Crédit 771 (Intérêts de placements).')">A) Débit 521 / Crédit 771 (Intérêts de placements)</button>
+      <button class="qopt" onclick="rq(this,false,'rq7','Non. Ce serait pour des intérêts DÉBITEURS (charges). Les intérêts créditeurs entrent dans le 521.')">B) Débit 6741 / Crédit 521</button>
+      <button class="qopt" onclick="rq(this,false,'rq7','Non. Les intérêts créditeurs sont un produit → le 521 est débité (entrée d\'argent).')">C) Débit 401 / Crédit 521</button>
+      <div id="rfb-rq7" class="qfb"></div>
+    </div>
+
+    <div class="qcard" id="rq8">
+      <p>Q8. Quelle est la fréquence minimale recommandée pour le rapprochement bancaire selon les bonnes pratiques SYSCOHADA ?</p>
+      <button class="qopt" onclick="rq(this,false,'rq8','Non. Annuel est insuffisant. Des erreurs pourraient s\'accumuler sur toute une année.')">A) Annuelle</button>
+      <button class="qopt" onclick="rq(this,true,'rq8','Exact ! Le rapprochement bancaire doit être fait au minimum chaque fin de mois, et idéalement chaque semaine pour les entreprises avec beaucoup de transactions.')">B) Mensuelle (fin de chaque mois)</button>
+      <button class="qopt" onclick="rq(this,false,'rq8','Toutes les 5 ans est absurde en comptabilité ! Mensuel est le minimum.')">C) Tous les 5 ans</button>
+      <div id="rfb-rq8" class="qfb"></div>
+    </div>
+
+    <button class="btn" onclick="showRScore()">📊 Voir mon score</button>
+    <div class="score-box" id="rscore">
+      <h3 id="rscore-txt">—</h3>
+      <p id="rscore-msg" style="margin-top:8px;"></p>
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================
+     MÉMO RAPIDE
+     ==================================================== -->
+<div id="memo" class="sec">
+
+  <div class="card">
+    <div class="ctitle" style="color:var(--bleu);">🗝 Mémo Rapide – Tout en 1 Page</div>
+  </div>
+
+  <!-- Schéma des étapes -->
+  <div class="card">
+    <div class="ctitle" style="color:var(--orange);">📌 Les 5 Étapes en Un Coup d'Œil</div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div class="rb rb2"><strong>① Réunir :</strong> Relevé bancaire + Grand Livre 521 + État mois précédent</div>
+      <div style="text-align:center;font-size:1.4rem;">↓</div>
+      <div class="rb rv"><strong>② Pointer :</strong> Cocher les opérations communes aux deux documents</div>
+      <div style="text-align:center;font-size:1.4rem;">↓</div>
+      <div class="rb ro"><strong>③ Identifier :</strong> Lister les opérations non pointées (écarts)</div>
+      <div style="text-align:center;font-size:1.4rem;">↓</div>
+      <div class="rb rj"><strong>④ Construire :</strong> L'état de rapprochement en 2 colonnes → soldes ajustés égaux</div>
+      <div style="text-align:center;font-size:1.4rem;">↓</div>
+      <div class="rb rr"><strong>⑤ Régulariser :</strong> Passer les écritures pour les opérations relevé non comptabilisées</div>
+    </div>
+  </div>
+
+  <!-- Tableau de décision -->
+  <div class="card">
+    <div class="ctitle" style="color:var(--rouge);">⚡ Tableau de Décision Rapide</div>
+    <table class="tbl">
+      <tr><th>Opération trouvée</th><th>Action dans l'état</th><th>Écriture ?</th></tr>
+      <tr>
+        <td>Dans 521, PAS sur relevé → encaissement</td>
+        <td class="vert bold">+ au solde bancaire</td>
+        <td class="rouge">❌ Non (en transit)</td>
+      </tr>
+      <tr>
+        <td>Dans 521, PAS sur relevé → décaissement</td>
+        <td class="rouge bold">– du solde bancaire</td>
+        <td class="rouge">❌ Non (en transit)</td>
+      </tr>
+      <tr>
+        <td>Sur relevé, PAS dans 521 → entrée d'argent</td>
+        <td class="vert bold">+ au solde comptable</td>
+        <td class="vert bold">✅ Oui : D/521 C/411 ou 771</td>
+      </tr>
+      <tr>
+        <td>Sur relevé, PAS dans 521 → sortie d'argent</td>
+        <td class="rouge bold">– du solde comptable</td>
+        <td class="vert bold">✅ Oui : D/6... C/521</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Comptes clés -->
+  <div class="card">
+    <div class="ctitle" style="color:var(--vert);">📚 Comptes Clés du Rapprochement Bancaire</div>
+    <table class="tbl">
+      <tr><th>N° Compte</th><th>Intitulé</th><th>Utilisation</th></tr>
+      <tr><td>521</td><td>Banque</td><td>Compte principal – toutes opérations bancaires</td></tr>
+      <tr><td>531</td><td>Chèque postaux (CCP)</td><td>Si compte CCP</td></tr>
+      <tr><td>411</td><td>Clients</td><td>Virement/encaissement reçu client</td></tr>
+      <tr><td>401</td><td>Fournisseurs</td><td>Paiement effectué fournisseur</td></tr>
+      <tr><td>4131</td><td>Clients, chèques impayés</td><td>Chèque client retourné impayé</td></tr>
+      <tr><td>6312</td><td>Frais bancaires / sur effets</td><td>Frais de tenue, commissions diverses</td></tr>
+      <tr><td>6317</td><td>Frais de transfert</td><td>Virements internationaux, frais Mobile Money</td></tr>
+      <tr><td>6462</td><td>Droits de timbre (TOB)</td><td>Taxe sur opérations bancaires</td></tr>
+      <tr><td>6741</td><td>Intérêts sur découverts</td><td>Agios débiteurs, pénalités</td></tr>
+      <tr><td>771</td><td>Intérêts de placements</td><td>Intérêts créditeurs reçus</td></tr>
+      <tr><td>7078</td><td>Produits accessoires</td><td>Frais d'impayés refacturés au client</td></tr>
+    </table>
+  </div>
+
+  <!-- Erreurs fréquentes -->
+  <div class="card">
+    <div class="ctitle" style="color:var(--rouge);">⚠️ Erreurs à Éviter – Les Pièges Classiques</div>
+    <div class="rb rr">
+      <strong>Piège 1 – Confondre le sens des colonnes</strong>
+      Sur le relevé bancaire, le DÉBIT = sortie pour toi. C'est l'inverse de la vision comptable !
+    </div>
+    <div class="rb ro">
+      <strong>Piège 2 – Vouloir passer des écritures pour les opérations en transit</strong>
+      Les chèques émis non encore présentés à la banque → PAS d'écriture ! Juste ajustement dans l'état.
+    </div>
+    <div class="rb rv2">
+      <strong>Piège 3 – Oublier l'état du mois précédent</strong>
+      Les écarts du mois M–1 doivent apparaître sur le relevé de M. Vérifie toujours que les opérations en suspens du mois précédent ont bien été régularisées.
+    </div>
+    <div class="rb rj">
+      <strong>Piège 4 – Oublier la TVA sur les frais bancaires</strong>
+      Certains frais bancaires peuvent comporter de la TVA → vérifier si déductible ou non. Les agios bancaires sont exonérés de TVA. Les commissions peuvent l'inclure.
+    </div>
+    <div class="rb rb2">
+      <strong>Piège 5 – Ne pas réconcilier jusqu'au bout</strong>
+      Si les soldes ajustés ne sont pas égaux, il FAUT chercher l'erreur. Ne jamais laisser un écart inexpliqué.
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div style="background:#1e2d40;color:#9db3c8;text-align:center;padding:22px;margin-top:40px;font-size:.85rem;">
+  <p>📒 <strong style="color:#fff;">Rapprochement Bancaire SYSCOHADA Révisé</strong> – Basé sur le Manuel M. KESSE Serge (BTS 2 FCGE)</p>
+  <p style="margin-top:6px;">🇨🇮 Côte d'Ivoire · En créditant l'effort, nous débitons la réussite.</p>
+</div>
+
+<script>
+// NAV
+function go(id){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  event.target.classList.add('on');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// POINTAGE INTERACTIF
+const pairMap={
+  'ch-a47':['cpta-a47','bank-a47'],
+  'ch-a48':['cpta-a48','bank-a48'],
+  'bamba':['cpta-bamba','bank-bamba']
+};
+const selectedItems={};
+
+function pointer(el,pairId,side){
+  const key=side+'-'+pairId;
+  if(el.classList.contains('matched')) return;
+  el.classList.toggle('selected');
+  selectedItems[pairId]=selectedItems[pairId]||{};
+  selectedItems[pairId][side]=el;
+  // auto-match if both sides selected
+  if(pairMap[pairId]&&selectedItems[pairId].cpta&&selectedItems[pairId].bank){
+    selectedItems[pairId].cpta.classList.add('matched');
+    selectedItems[pairId].cpta.classList.remove('unmatched','selected');
+    selectedItems[pairId].bank.classList.add('matched');
+    selectedItems[pairId].bank.classList.remove('unmatched','selected');
+  }
+}
+
+function checkPointage(){
+  const matched=document.querySelectorAll('.pointage-item.matched').length;
+  const unmatched=document.querySelectorAll('.pointage-item.unmatched').length;
+  const res=document.getElementById('pointage-result');
+  const msg=document.getElementById('pointage-msg');
+  res.style.display='block';
+  if(matched>=6){
+    msg.innerHTML='<strong>✅ Excellent pointage !</strong> '+matched+' opérations pointées correctement.<br>Les '+unmatched+' opérations orange sont les écarts à traiter (en transit ou à régulariser).';
+    res.style.background=res.style.borderLeftColor='';
+    res.classList.add('rv');
+  } else {
+    msg.innerHTML='<strong>Continue !</strong> Tu as pointé '+matched+'/6 opérations. Clique sur les opérations identiques dans les deux colonnes.';
+    res.classList.add('rj');
+  }
+}
+function resetPointage(){
+  document.querySelectorAll('.pointage-item').forEach(el=>{el.classList.remove('matched','selected');});
+  Object.keys(selectedItems).forEach(k=>delete selectedItems[k]);
+  document.getElementById('pointage-result').style.display='none';
+}
+
+// QUIZ
+let rscores={};
+function rq(btn,ok,qid,expl){
+  const btns=btn.parentElement.querySelectorAll('.qopt');
+  btns.forEach(b=>b.disabled=true);
+  btn.classList.add(ok?'ok':'ko');
+  if(!ok) btns.forEach(b=>{if(!b.classList.contains('ko'))b.classList.add('ok');});
+  rscores[qid]=ok;
+  const fb=document.getElementById('rfb-'+qid);
+  fb.textContent=expl;
+  fb.style.background=ok?'var(--vert-c)':'var(--rouge-c)';
+  fb.style.color=ok?'var(--vert)':'var(--rouge)';
+  fb.style.padding='10px 14px';
+  fb.style.borderRadius='8px';
+  fb.classList.add('show');
+}
+function showRScore(){
+  const total=Object.keys(rscores).length;
+  const ok=Object.values(rscores).filter(v=>v).length;
+  const box=document.getElementById('rscore');
+  box.style.display='block';
+  document.getElementById('rscore-txt').textContent=ok+'/8';
+  let msg;
+  if(ok>=7) msg='🏆 Excellent ! Tu maîtrises le rapprochement bancaire. Passe aux exercices avancés !';
+  else if(ok>=6) msg='✅ Bien ! Quelques points à revoir mais tu as les bases solides.';
+  else if(ok>=4) msg='📘 Passable. Relis attentivement la leçon et refais le quiz.';
+  else msg='🔄 À retravailler. Commence par bien comprendre le sens des comptes 521 et relevé.';
+  document.getElementById('rscore-msg').textContent=msg;
+  if(ok<6) box.style.background='var(--orange)';
+}
+</script>
+</body>
+</html>
